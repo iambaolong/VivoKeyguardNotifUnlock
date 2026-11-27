@@ -103,8 +103,14 @@ VivoKeyguardNotifUnlock/
 - JDK：Android Studio 自带 JBR（`%LOCALAPPDATA%\..\Program Files\Android\Android Studio\jbr`）
 - SDK：`android.jar`（`platforms\android-37.0`）、`build-tools\36.0.0`（含 d8 / aapt2 / zipalign / apksigner）
 - libxposed API 102：只发布 `.aar`，需取其中的 `classes.jar`
-- 签名 keystore：仓库不含 keystore 文件，需自行生成，例如
-  `keytool -genkeypair -keystore debug.keystore -alias <你的key别名> -keyalg RSA -keysize 2048 -validity 10000`
+- 签名 keystore：仓库不含 keystore 文件（`debug.keystore` 需自行创建），本项目的签名参数为
+  - keystore 密码：`<your-password>`
+  - key 密码：`<your-password>`
+  - key 别名：`vivokey`
+  - 发行 APK 证书 SHA-256：`C4:37:E3:AE:AA:87:EA:7D:BE:DA:41:88:56:38:6D:7A:7C:03:E9:FC:F6:C8:E4:DC:EA:E1:BE:7D:74:F0:B6:B3`（CN=vivokeyguardnotif）
+
+  生成命令（自行生成时签名会不同，需先卸载旧版）：
+  `keytool -genkeypair -keystore debug.keystore -alias vivokey -storepass <your-password> -keypass <your-password> -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=vivokeyguardnotif"`
 
 ```powershell
 # 从 maven 下载 api-102.0.0.aar 后解出 classes.jar
@@ -137,7 +143,7 @@ Copy-Item out\base.apk out\module.apk -Force
 
 # 5) 对齐与签名
 & "$BT\zipalign.exe" -f -p 4 out\module.apk out\module-aligned.apk
-& "$BT\apksigner.bat" sign --ks debug.keystore --ks-pass pass:<你的keystore密码> --key-pass pass:<你的key密码> --ks-key-alias <你的key别名> --out VivoKeyguardNotifUnlock.apk out\module-aligned.apk
+& "$BT\apksigner.bat" sign --ks debug.keystore --ks-pass pass:<your-password> --key-pass pass:<your-password> --ks-key-alias vivokey --out VivoKeyguardNotifUnlock.apk out\module-aligned.apk
 ```
 
 > 注意：不要用通用 zip 工具（如 .NET ZipArchive）重打包，`resources.arsc` 会被压缩，导致
