@@ -17,7 +17,8 @@ import java.lang.reflect.Method;
  *   - 锁屏渲染时 VivoKeyguardNotificationVisibilityProviderImpl.vivoKeyguardNotificationFilter()
  *     会把未打标的旧通知过滤掉
  *
- * 本模块在 filter 执行前把 mBelongToKeyguard 强制置 true，
+ * 本模块在 filter 执行期间把 mBelongToKeyguard 临时置 true，调用返回后恢复原值，
+ * 既让过滤逻辑看到 true，又不污染其他读取该字段的 SystemUI 代码路径。
  * 其余 vivo 过滤逻辑（锁屏隐私模式、用户开关、专注模式、低优先级/常驻过滤）全部保留。
  *
  * 注意：本机 LSPosed（JingMatrix Vector 架构）对 legacy 模块（assets/xposed_init）
@@ -32,6 +33,7 @@ public class ModernHookEntry extends XposedModule {
             "com.android.systemui.statusbar.notification.collection.NotificationEntry";
 
     private static Field sField;
+    private static boolean sFieldFailLogged;
 
     @Override
     public void onPackageLoaded(PackageLoadedParam param) {
@@ -45,16 +47,37 @@ public class ModernHookEntry extends XposedModule {
             Method filter = provider.getDeclaredMethod("vivoKeyguardNotificationFilter", entry);
             hook(filter).intercept(chain -> {
                 Object e = chain.getArg(0);
-                if (e != null) {
-                    try {
-                        sField.setBoolean(e, true);
-                    } catch (Throwable ignored) {
+                if (e == null || sField == null) {
+                    return chain.proceed();
+                }
+                boolean orig = false;
+                boolean marked = false;
+                try {
+                    orig = sField.getBoolean(e);
+                    sField.setBoolean(e, true);
+                    marked = true;
+                } catch (Throwable t) {
+                    logFieldFailOnce(t);
+                }
+                try {
+                    return chain.proceed();
+                } finally {
+                    if (marked) {
+                        try {
+                            sField.setBoolean(e, orig);
+                        } catch (Throwable ignored) {
+                        }
                     }
                 }
-                return chain.proceed();
             });
         } catch (Throwable t) {
             Log.e(TAG, "hook setup failed", t);
         }
+    }
+
+    private static void logFieldFailOnce(Throwable t) {
+        if (sFieldFailLogged) return;
+        sFieldFailLogged = true;
+        Log.w(TAG, "set mBelongToKeyguard failed", t);
     }
 }

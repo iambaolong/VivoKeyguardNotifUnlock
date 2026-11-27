@@ -43,7 +43,7 @@ com.android.systemui.statusbar.notification.collection.NotificationEntry.mBelong
 方法：public final boolean vivoKeyguardNotificationFilter(NotificationEntry)
 ```
 
-在该方法执行前，把入参 entry 的 `mBelongToKeyguard` 强制置为 `true`，再放行原方法：
+在该方法执行期间，把入参 entry 的 `mBelongToKeyguard` 临时置为 `true`，放行原方法，返回后再恢复原值：
 
 ```java
 private static Field sField; // NotificationEntry.mBelongToKeyguard（public boolean）
@@ -51,14 +51,18 @@ private static Field sField; // NotificationEntry.mBelongToKeyguard（public boo
 Method filter = provider.getDeclaredMethod("vivoKeyguardNotificationFilter", entry);
 hook(filter).intercept(chain -> {
     Object e = chain.getArg(0);
-    if (e != null) {
-        try { sField.setBoolean(e, true); } catch (Throwable ignored) {}
+    if (e == null) return chain.proceed();
+    boolean orig = sField.getBoolean(e);
+    sField.setBoolean(e, true);
+    try {
+        return chain.proceed();
+    } finally {
+        sField.setBoolean(e, orig);   // 恢复，避免污染其他读取该字段的路径
     }
-    return chain.proceed();
 });
 ```
 
-由于只改这一个字段，方法内部其余判断（隐私模式、开关、优先级等）仍按 vivo 原逻辑执行，副作用最小。
+由于只在这一个方法调用内改字段，方法内部其余判断（隐私模式、开关、优先级等）仍按 vivo 原逻辑执行；调用结束后共享状态不被污染，副作用最小。
 
 ### 2.3 为什么必须用 modern API
 
