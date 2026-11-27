@@ -99,6 +99,8 @@ VivoKeyguardNotifUnlock/
 - JDK：Android Studio 自带 JBR（`%LOCALAPPDATA%\..\Program Files\Android\Android Studio\jbr`）
 - SDK：`android.jar`（`platforms\android-37.0`）、`build-tools\36.0.0`（含 d8 / aapt2 / zipalign / apksigner）
 - libxposed API 102：只发布 `.aar`，需取其中的 `classes.jar`
+- 签名 keystore：仓库不含 keystore 文件，需自行生成，例如
+  `keytool -genkeypair -keystore debug.keystore -alias <你的key别名> -keyalg RSA -keysize 2048 -validity 10000`
 
 ```powershell
 # 从 maven 下载 api-102.0.0.aar 后解出 classes.jar
