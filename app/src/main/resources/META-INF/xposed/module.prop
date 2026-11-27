@@ -1,0 +1,4 @@
+minApiVersion=102
+targetApiVersion=102
+name=VivoKeyguardNotifUnlock
+description=Show all historical notifications on the keyguard
