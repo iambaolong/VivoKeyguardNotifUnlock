@@ -131,7 +131,7 @@ Copy-Item out\base.apk out\module.apk -Force
 
 # 5) 对齐与签名
 & "$BT\zipalign.exe" -f -p 4 out\module.apk out\module-aligned.apk
-& "$BT\apksigner.bat" sign --ks debug.keystore --ks-pass pass:<your-password> --key-pass pass:<your-password> --ks-key-alias vivokey --out VivoKeyguardNotifUnlock.apk out\module-aligned.apk
+& "$BT\apksigner.bat" sign --ks debug.keystore --ks-pass pass:<你的keystore密码> --key-pass pass:<你的key密码> --ks-key-alias <你的key别名> --out VivoKeyguardNotifUnlock.apk out\module-aligned.apk
 ```
 
 > 注意：不要用通用 zip 工具（如 .NET ZipArchive）重打包，`resources.arsc` 会被压缩，导致
