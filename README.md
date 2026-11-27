@@ -83,8 +83,6 @@ hook(filter).intercept(chain -> {
 ```
 VivoKeyguardNotifUnlock/
 ├─ VivoKeyguardNotifUnlock.apk            # 已编译并签名的成品（modern 版）
-├─ build.ps1                              # 一键构建脚本（Windows / PowerShell）
-├─ debug.keystore                         # 签名用 keystore（参数见 4.1）
 ├─ app/src/main/
 │  ├─ AndroidManifest.xml                 # package / uses-sdk / label
 │  ├─ java/com/zxl/vivokeyguardnotif/
@@ -105,7 +103,7 @@ VivoKeyguardNotifUnlock/
 - JDK：Android Studio 自带 JBR（`%LOCALAPPDATA%\..\Program Files\Android\Android Studio\jbr`）
 - SDK：`android.jar`（`platforms\android-37.0`）、`build-tools\36.0.0`（含 d8 / aapt2 / zipalign / apksigner）
 - libxposed API 102：只发布 `.aar`，需取其中的 `classes.jar`
-- 签名 keystore：`debug.keystore` 已随仓库提供（仅供本项目使用），签名参数为
+- 签名 keystore：仓库不含 keystore 文件（`debug.keystore` 需自行创建），本项目的签名参数为
   - keystore 密码：`<your-password>`
   - key 密码：`<your-password>`
   - key 别名：`vivokey`
@@ -119,15 +117,7 @@ VivoKeyguardNotifUnlock/
 # 路径参考：...\maven2\io\github\libxposed\api\102.0.0\api-102.0.0.aar
 ```
 
-### 4.2 一键构建
-
-```powershell
-powershell -ExecutionPolicy Bypass -File build.ps1
-```
-
-脚本会自动定位 JDK / Android SDK（也可用 `JAVA_HOME`、`ANDROID_HOME` 指定路径），首次运行会从 Maven 下载 libxposed API 102 并解出 `classes.jar`，最后输出 `VivoKeyguardNotifUnlock.apk` 和 SHA256。
-
-### 4.3 手动构建（分步，可选）
+### 4.2 编译与打包
 
 ```powershell
 $JAVA = "C:\Program Files\Android\Android Studio\jbr"
