@@ -82,7 +82,6 @@ hook(filter).intercept(chain -> {
 
 ```
 VivoKeyguardNotifUnlock/
-├─ VivoKeyguardNotifUnlock.apk            # 已编译并签名的成品（modern 版）
 ├─ app/src/main/
 │  ├─ AndroidManifest.xml                 # package / uses-sdk / label
 │  ├─ java/com/zxl/vivokeyguardnotif/
@@ -155,7 +154,7 @@ Copy-Item out\base.apk out\module.apk -Force
 
 ## 6. 下载
 
-已编译并签名的模块见仓库根目录：`VivoKeyguardNotifUnlock.apk`（自签名，仅供个人设备使用）。
+已编译并签名的模块在 [Releases](https://github.com/iambaolong/VivoKeyguardNotifUnlock/releases) 中下载（自签名，仅供个人设备使用）。仓库不再存放 APK 文件。
 
 ---
 

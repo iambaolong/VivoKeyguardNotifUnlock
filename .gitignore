@@ -1,3 +1,5 @@
 # 构建中间产物
 out/
 *.idsig
+# 成品只发布到 Releases，不入库
+*.apk
