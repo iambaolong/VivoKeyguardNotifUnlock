@@ -126,7 +126,7 @@ New-Item -ItemType Directory -Force out\dex | Out-Null
 & "$BT\d8.bat" --min-api 27 --lib "$AJ" --lib "$API" --output out\dex out\com\zxl\vivokeyguardnotif\ModernHookEntry.class
 
 # 3) 生成基础 APK（aapt2 保证 resources.arsc 不压缩）
-& "$BT\aapt2.exe" link -o out\base.apk --manifest app\src\main\AndroidManifest.xml -I "$AJ" --min-sdk-version 27 --target-sdk-version 34
+& "$BT\aapt2.exe" link -o out\base.apk --manifest app\src\main\AndroidManifest.xml -I "$AJ" --min-sdk-version 27 --target-sdk-version 37
 Copy-Item out\base.apk out\module.apk -Force
 
 # 4) 写入 dex 与 modern 元数据（jar 的 -C 只作用于紧跟的一个参数，故分三条）
