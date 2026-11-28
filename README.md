@@ -2,7 +2,7 @@
 
 让 vivo 锁屏显示**所有**历史通知
 
-- 目标设备：vivo V2419A（Android 17 / OriginOS 17，已 root）
+- 目标设备：vivo V2419A（Android 17 / OriginOS 7，已 root）
 - 运行环境：KernelSU + Zygisk Next + LSPosed 2.2.1
 - 模块类型：**modern LSPosed 模块**（libxposed API 102），作用域仅 `com.android.systemui`
 
